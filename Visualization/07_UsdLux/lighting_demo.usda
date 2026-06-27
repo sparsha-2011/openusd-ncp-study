@@ -1,0 +1,190 @@
+#usda 1.0
+(
+    doc = """Generated from Composed Stage of root layer 
+"""
+    metersPerUnit = 0.01
+    upAxis = "Y"
+)
+
+def "Looks"
+{
+    def Material "GreyMat"
+    {
+        token outputs:surface.connect = </Looks/GreyMat/Surface.outputs:surface>
+
+        def Shader "Surface"
+        {
+            uniform token info:id = "UsdPreviewSurface"
+            color3f inputs:diffuseColor = (0.7, 0.7, 0.7)
+            float inputs:roughness = 0.4
+            token outputs:surface
+        }
+    }
+}
+
+def "World"
+{
+    def Cube "Ground" (
+        apiSchemas = ["MaterialBindingAPI"]
+    )
+    {
+        rel material:binding = </Looks/GreyMat>
+        color3f[] primvars:displayColor = [(0.3, 0.3, 0.3)]
+        double size = 1
+        float3 xformOp:scale = (140, 0.2, 20)
+        double3 xformOp:translate = (0, -3, 0)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Sphere "Sphere_Distant" (
+        apiSchemas = ["MaterialBindingAPI"]
+    )
+    {
+        rel material:binding = </Looks/GreyMat>
+        color3f[] primvars:displayColor = [(0.7, 0.7, 0.7)]
+        double radius = 2
+        double3 xformOp:translate = (-60, 0, 0)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+    }
+
+    def Sphere "Sphere_Sphere" (
+        apiSchemas = ["MaterialBindingAPI"]
+    )
+    {
+        rel material:binding = </Looks/GreyMat>
+        color3f[] primvars:displayColor = [(0.7, 0.7, 0.7)]
+        double radius = 2
+        double3 xformOp:translate = (-40, 0, 0)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+    }
+
+    def Sphere "Sphere_Rect" (
+        apiSchemas = ["MaterialBindingAPI"]
+    )
+    {
+        rel material:binding = </Looks/GreyMat>
+        color3f[] primvars:displayColor = [(0.7, 0.7, 0.7)]
+        double radius = 2
+        double3 xformOp:translate = (-20, 0, 0)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+    }
+
+    def Sphere "Sphere_Disk" (
+        apiSchemas = ["MaterialBindingAPI"]
+    )
+    {
+        rel material:binding = </Looks/GreyMat>
+        color3f[] primvars:displayColor = [(0.7, 0.7, 0.7)]
+        double radius = 2
+        double3 xformOp:translate = (0, 0, 0)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+    }
+
+    def Sphere "Sphere_Cylinder" (
+        apiSchemas = ["MaterialBindingAPI"]
+    )
+    {
+        rel material:binding = </Looks/GreyMat>
+        color3f[] primvars:displayColor = [(0.7, 0.7, 0.7)]
+        double radius = 2
+        double3 xformOp:translate = (20, 0, 0)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+    }
+
+    def Sphere "Sphere_Cone" (
+        apiSchemas = ["MaterialBindingAPI"]
+    )
+    {
+        rel material:binding = </Looks/GreyMat>
+        color3f[] primvars:displayColor = [(0.7, 0.7, 0.7)]
+        double radius = 2
+        double3 xformOp:translate = (40, 0, 0)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+    }
+
+    def Sphere "Sphere_Dome_ref" (
+        apiSchemas = ["MaterialBindingAPI"]
+    )
+    {
+        rel material:binding = </Looks/GreyMat>
+        color3f[] primvars:displayColor = [(0.7, 0.7, 0.7)]
+        double radius = 2
+        double3 xformOp:translate = (60, 0, 0)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+    }
+}
+
+def Scope "Lights"
+{
+    def DistantLight "DistantLight"
+    {
+        float inputs:angle = 0.53
+        color3f inputs:color = (1, 0.95, 0.85)
+        float inputs:intensity = 5000
+        float3 xformOp:rotateXYZ = (-45, 0, 0)
+        double3 xformOp:translate = (-60, 20, 10)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
+    }
+
+    def SphereLight "SphereLight"
+    {
+        color3f inputs:color = (1, 0.8, 0.6)
+        float inputs:intensity = 80000
+        float inputs:radius = 0.5
+        double3 xformOp:translate = (-40, 8, 5)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+    }
+
+    def RectLight "RectLight"
+    {
+        color3f inputs:color = (0.9, 0.95, 1)
+        float inputs:height = 6
+        float inputs:intensity = 8000
+        float inputs:width = 6
+        float3 xformOp:rotateXYZ = (-40, 0, 0)
+        double3 xformOp:translate = (-20, 10, 8)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
+    }
+
+    def DiskLight "DiskLight"
+    {
+        color3f inputs:color = (0.8, 1, 0.9)
+        float inputs:intensity = 8000
+        float inputs:radius = 3
+        float3 xformOp:rotateXYZ = (-50, 0, 0)
+        double3 xformOp:translate = (0, 12, 6)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
+    }
+
+    def CylinderLight "CylinderLight"
+    {
+        color3f inputs:color = (1, 0.5, 0.2)
+        float inputs:intensity = 15000
+        float inputs:length = 10
+        float inputs:radius = 0.3
+        double3 xformOp:translate = (20, 8, 0)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+    }
+
+    def SphereLight "ConeLight" (
+        apiSchemas = ["ShapingAPI"]
+    )
+    {
+        color3f inputs:color = (1, 1, 0.7)
+        float inputs:intensity = 100000
+        float inputs:radius = 0.3
+        float inputs:shaping:cone:angle = 20
+        float inputs:shaping:cone:softness = 0.1
+        float inputs:shaping:focus = 5
+        float3 xformOp:rotateXYZ = (-90, 0, 0)
+        double3 xformOp:translate = (40, 15, 0)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
+    }
+
+    def DomeLight "DomeLight_ambient"
+    {
+        color3f inputs:color = (0.4, 0.5, 0.8)
+        float inputs:intensity = 0.3
+    }
+}
+
