@@ -1,0 +1,33 @@
+#usda 1.0
+(
+    doc = """Generated from Composed Stage of root layer 
+"""
+    metersPerUnit = 0.01
+    upAxis = "Y"
+)
+
+def "World"
+{
+    def Sphere "HeroMesh"
+    {
+        color3f[] primvars:displayColor = [(1, 0.4, 0)]
+        double radius = 3
+        double3 xformOp:translate = (-10, 0, 0)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+    }
+
+    def Sphere "ProxyMesh"
+    {
+        color3f[] primvars:displayColor = [(0.6, 0.6, 0.6)]
+        double radius = 1
+    }
+
+    def Sphere "RigControl"
+    {
+        color3f[] primvars:displayColor = [(0, 1, 1)]
+        double radius = 0.5
+        double3 xformOp:translate = (10, 3, 0)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+    }
+}
+

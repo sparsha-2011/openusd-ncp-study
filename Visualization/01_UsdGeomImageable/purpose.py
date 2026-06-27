@@ -1,25 +1,34 @@
 """
-UsdGeomImageable — PURPOSE DEMO (usdview compatible)
-======================================================
-This script creates TWO separate scenes so you can compare them
-side by side in usdview WITHOUT needing View -> Show By Purpose.
+UsdGeomImageable — PURPOSE DEMO
+=================================
+This script demonstrates purpose tokens properly.
+Each representation gets its CORRECT purpose token set,
+then we create separate files to visualise each perspective.
 
-  purpose_demo_ALL.usda    → everything visible (all purposes shown)
-  purpose_demo_RENDER.usda → only render purpose prim shown
-  purpose_demo_PROXY.usda  → only proxy purpose prim shown
+PURPOSE TOKENS:
+  "default"  →  shown everywhere — the fallback
+  "render"   →  final quality mesh — renderer only
+  "proxy"    →  lightweight stand-in — viewport
+  "guide"    →  rig controls — rigging tools only
 
-The character has three representations:
-  HeroMesh    purpose="render"  big orange sphere (3 units radius)
-  ProxyMesh   purpose="proxy"   small grey sphere (1 unit radius)
-  RigControl  purpose="guide"   tiny cyan sphere above head
+WHY USDVIEW ONLY SHOWS GREY (proxy):
+  usdview acts like a viewport tool.
+  By default it shows: "default" and "proxy"
+  By default it hides: "render" and "guide"
+  This is CORRECT behaviour — not a bug.
 
-HOW TO SEE THE DIFFERENCE:
-  Open all three files in separate usdview windows and compare.
-  Each file forces a different representation to be "default"
-  so usdview shows it without any special filter settings.
+FILES CREATED:
+  purpose_compare.usda   → all prims purpose="default" so you see everything
+  purpose.usda   → correct purpose tokens — usdview shows proxy only
+
+HOW TO VERIFY THE ORANGE SPHERE EXISTS:
+  Open purpose_correct.usda in a TEXT EDITOR
+  You will see HeroMesh with radius=3 and orange colour
+  AND the line:  uniform token purpose = "render"
+  It IS there — usdview just filters it by purpose
 
 Run: python purpose_demo.py
-Then open each .usda file in usdview and press F to frame.
+Then open each file in usdview and press F.
 """
 
 import os
@@ -28,175 +37,150 @@ from pxr import Usd, UsdGeom, Gf
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
-def add_ground(stage):
-    """Add a grey ground plane so there is always something to frame."""
-    ground = UsdGeom.Cube.Define(stage, "/World/Ground")
-    ground.GetSizeAttr().Set(1.0)                                    # unit cube
-    UsdGeom.XformCommonAPI(ground).SetScale(Gf.Vec3f(40, 0.1, 40))  # flat slab
-    UsdGeom.XformCommonAPI(ground).SetTranslate(Gf.Vec3d(0, -4, 0)) # well below spheres
-    ground.GetDisplayColorAttr().Set([(0.2, 0.2, 0.2)])
-
-# ─────────────────────────────────────────────────────────────────────
-# SCENE 1 — ALL THREE REPRESENTATIONS VISIBLE
-# We set purpose="default" on all three so usdview shows everything
-# This is the "see the full picture" file
-# ─────────────────────────────────────────────────────────────────────
+# ═══════════════════════════════════════════════════════════════════════
+# FILE 1: purpose.usda
+# All prims have purpose="default" so usdview shows EVERYTHING
+# Use this to see all three representations side by side
+# Orange (big) LEFT · Grey (small) MIDDLE · Cyan (tiny) RIGHT
+# ═══════════════════════════════════════════════════════════════════════
 s1 = Usd.Stage.CreateInMemory()
 UsdGeom.SetStageUpAxis(s1, UsdGeom.Tokens.y)
 UsdGeom.SetStageMetersPerUnit(s1, 0.01)
 
-char1 = UsdGeom.Xform.Define(s1, "/World/Character")
-
-# Hero — big orange sphere
-hero1 = UsdGeom.Sphere.Define(s1, "/World/Character/HeroMesh")
+# RENDER representation — big orange sphere, LEFT
+# purpose intentionally left as "default" so usdview shows it
+# In real production this would be purpose="render"
+hero1 = UsdGeom.Sphere.Define(s1, "/World/HeroMesh")
 hero1.GetRadiusAttr().Set(3.0)
-hero1.GetDisplayColorAttr().Set([(0.9, 0.5, 0.1)])  # orange
-# NOTE: purpose = "default" here so usdview shows it without filtering
+hero1.GetDisplayColorAttr().Set([(1.0, 0.4, 0.0)])        # bright orange
+UsdGeom.XformCommonAPI(hero1).SetTranslate(Gf.Vec3d(-10, 0, 0))
 
-# Proxy — small grey sphere, offset to the right so you can see both
-proxy1 = UsdGeom.Sphere.Define(s1, "/World/Character/ProxyMesh")
+# PROXY representation — small grey sphere, MIDDLE
+# purpose="default" — always visible
+# In real production this would be purpose="proxy"
+proxy1 = UsdGeom.Sphere.Define(s1, "/World/ProxyMesh")
 proxy1.GetRadiusAttr().Set(1.0)
-proxy1.GetDisplayColorAttr().Set([(0.6, 0.6, 0.6)])  # grey
-UsdGeom.XformCommonAPI(proxy1).SetTranslate(Gf.Vec3d(7, 0, 0))
+proxy1.GetDisplayColorAttr().Set([(0.6, 0.6, 0.6)])       # grey
 
-# Guide — tiny cyan sphere above hero
-guide1 = UsdGeom.Sphere.Define(s1, "/World/Character/RigControl")
-guide1.GetRadiusAttr().Set(0.4)
-guide1.GetDisplayColorAttr().Set([(0.0, 1.0, 1.0)])  # cyan
-UsdGeom.XformCommonAPI(guide1).SetTranslate(Gf.Vec3d(0, 5, 0))
+# GUIDE representation — tiny cyan sphere, RIGHT
+# purpose="default" — always visible
+# In real production this would be purpose="guide"
+guide1 = UsdGeom.Sphere.Define(s1, "/World/RigControl")
+guide1.GetRadiusAttr().Set(0.5)
+guide1.GetDisplayColorAttr().Set([(0.0, 1.0, 1.0)])       # cyan
+UsdGeom.XformCommonAPI(guide1).SetTranslate(Gf.Vec3d(10, 3, 0))
 
-# Labels via display colour make it easy to identify:
-# Orange = what the renderer would use
-# Grey   = what the artist sees in viewport
-# Cyan   = what the rigger sees
-
-add_ground(s1)
-path1 = os.path.join(SCRIPT_DIR, "purpose_ALL.usda")
+path1 = os.path.join(SCRIPT_DIR, "purpose.usda")
 s1.Export(path1)
-print(f"Scene 1 saved → {path1}")
-print("  Shows: all three — big orange + small grey + tiny cyan")
+print(f"File 1 saved → {path1}")
+print("  All purpose='default' — usdview shows EVERYTHING")
+print("  LEFT  = big orange  (what a RENDERER uses)")
+print("  MID   = small grey  (what a VIEWPORT shows)")
+print("  RIGHT = tiny cyan   (what a RIGGER sees)")
+print()
 
 
-# ─────────────────────────────────────────────────────────────────────
-# SCENE 2 — ONLY THE HERO (what a renderer sees)
-# Hide proxy and guide by making them invisible
-# This simulates what the renderer would show
-# ─────────────────────────────────────────────────────────────────────
+# ═══════════════════════════════════════════════════════════════════════
+# FILE 2: purpose_correct.usda
+# Prims have their CORRECT purpose tokens
+# usdview only shows proxy (grey) — orange and cyan are filtered
+# The orange render sphere IS there — usdview filters it by purpose
+# ═══════════════════════════════════════════════════════════════════════
 s2 = Usd.Stage.CreateInMemory()
 UsdGeom.SetStageUpAxis(s2, UsdGeom.Tokens.y)
 UsdGeom.SetStageMetersPerUnit(s2, 0.01)
 
 char2 = UsdGeom.Xform.Define(s2, "/World/Character")
 
+# ── HERO — purpose="render" ──────────────────────────────────────────
 hero2 = UsdGeom.Sphere.Define(s2, "/World/Character/HeroMesh")
 hero2.GetRadiusAttr().Set(3.0)
-hero2.GetDisplayColorAttr().Set([(0.9, 0.5, 0.1)])  # orange
+hero2.GetDisplayColorAttr().Set([(1.0, 0.4, 0.0)])
+UsdGeom.XformCommonAPI(hero2).SetTranslate(Gf.Vec3d(-5, 0, 0))
+# Set the actual purpose token — THIS is what was missing before
+UsdGeom.Imageable(hero2.GetPrim()).GetPurposeAttr().Set(UsdGeom.Tokens.render)
+# Produces in USDA:  uniform token purpose = "render"
+# usdview HIDES this prim
 
+print(f"HeroMesh authored purpose:   {UsdGeom.Imageable(hero2.GetPrim()).GetPurposeAttr().Get()}")
+print(f"HeroMesh computed purpose:   {UsdGeom.Imageable(hero2.GetPrim()).ComputePurpose()}")
+
+# ── PROXY — purpose="proxy" ──────────────────────────────────────────
 proxy2 = UsdGeom.Sphere.Define(s2, "/World/Character/ProxyMesh")
 proxy2.GetRadiusAttr().Set(1.0)
 proxy2.GetDisplayColorAttr().Set([(0.6, 0.6, 0.6)])
-UsdGeom.XformCommonAPI(proxy2).SetTranslate(Gf.Vec3d(7, 0, 0))
-UsdGeom.Imageable(proxy2.GetPrim()).MakeInvisible()   # ← hidden
+# Set the actual purpose token
+UsdGeom.Imageable(proxy2.GetPrim()).GetPurposeAttr().Set(UsdGeom.Tokens.proxy)
+# Produces in USDA:  uniform token purpose = "proxy"
+# usdview SHOWS this prim
 
+print(f"ProxyMesh authored purpose:  {UsdGeom.Imageable(proxy2.GetPrim()).GetPurposeAttr().Get()}")
+print(f"ProxyMesh computed purpose:  {UsdGeom.Imageable(proxy2.GetPrim()).ComputePurpose()}")
+
+# ── GUIDE — purpose="guide" ──────────────────────────────────────────
 guide2 = UsdGeom.Sphere.Define(s2, "/World/Character/RigControl")
 guide2.GetRadiusAttr().Set(0.4)
 guide2.GetDisplayColorAttr().Set([(0.0, 1.0, 1.0)])
 UsdGeom.XformCommonAPI(guide2).SetTranslate(Gf.Vec3d(0, 5, 0))
-UsdGeom.Imageable(guide2.GetPrim()).MakeInvisible()   # ← hidden
+# Set the actual purpose token
+UsdGeom.Imageable(guide2.GetPrim()).GetPurposeAttr().Set(UsdGeom.Tokens.guide)
+# Produces in USDA:  uniform token purpose = "guide"
+# usdview HIDES this prim
 
-add_ground(s2)
-path2 = os.path.join(SCRIPT_DIR, "purpose_RENDER_ONLY.usda")
+print(f"RigControl authored purpose: {UsdGeom.Imageable(guide2.GetPrim()).GetPurposeAttr().Get()}")
+print(f"RigControl computed purpose: {UsdGeom.Imageable(guide2.GetPrim()).ComputePurpose()}")
+print()
+
+path2 = os.path.join(SCRIPT_DIR, "purpose_correct.usda")
 s2.Export(path2)
-print(f"Scene 2 saved → {path2}")
-print("  Shows: ONLY the big orange sphere (render quality)")
-
-
-# ─────────────────────────────────────────────────────────────────────
-# SCENE 3 — ONLY THE PROXY (what an artist's viewport sees)
-# Hide hero and guide, show only the proxy
-# This simulates what the layout artist would see
-# ─────────────────────────────────────────────────────────────────────
-s3 = Usd.Stage.CreateInMemory()
-UsdGeom.SetStageUpAxis(s3, UsdGeom.Tokens.y)
-UsdGeom.SetStageMetersPerUnit(s3, 0.01)
-
-char3 = UsdGeom.Xform.Define(s3, "/World/Character")
-
-hero3 = UsdGeom.Sphere.Define(s3, "/World/Character/HeroMesh")
-hero3.GetRadiusAttr().Set(3.0)
-hero3.GetDisplayColorAttr().Set([(0.9, 0.5, 0.1)])
-UsdGeom.Imageable(hero3.GetPrim()).MakeInvisible()    # ← hidden
-
-proxy3 = UsdGeom.Sphere.Define(s3, "/World/Character/ProxyMesh")
-proxy3.GetRadiusAttr().Set(1.0)
-proxy3.GetDisplayColorAttr().Set([(0.6, 0.6, 0.6)])
-
-guide3 = UsdGeom.Sphere.Define(s3, "/World/Character/RigControl")
-guide3.GetRadiusAttr().Set(0.4)
-guide3.GetDisplayColorAttr().Set([(0.0, 1.0, 1.0)])
-UsdGeom.XformCommonAPI(guide3).SetTranslate(Gf.Vec3d(0, 3, 0))
-UsdGeom.Imageable(guide3.GetPrim()).MakeInvisible()   # ← hidden
-
-add_ground(s3)
-path3 = os.path.join(SCRIPT_DIR, "purpose_PROXY_ONLY.usda")
-s3.Export(path3)
-print(f"Scene 3 saved → {path3}")
-print("  Shows: ONLY the small grey sphere (viewport stand-in)")
-
-
-# ─────────────────────────────────────────────────────────────────────
-# SCENE 4 — ONLY THE GUIDE (what a rigger sees)
-# ─────────────────────────────────────────────────────────────────────
-s4 = Usd.Stage.CreateInMemory()
-UsdGeom.SetStageUpAxis(s4, UsdGeom.Tokens.y)
-UsdGeom.SetStageMetersPerUnit(s4, 0.01)
-
-char4 = UsdGeom.Xform.Define(s4, "/World/Character")
-
-hero4 = UsdGeom.Sphere.Define(s4, "/World/Character/HeroMesh")
-hero4.GetRadiusAttr().Set(3.0)
-hero4.GetDisplayColorAttr().Set([(0.9, 0.5, 0.1)])
-UsdGeom.Imageable(hero4.GetPrim()).MakeInvisible()    # ← hidden
-
-proxy4 = UsdGeom.Sphere.Define(s4, "/World/Character/ProxyMesh")
-proxy4.GetRadiusAttr().Set(1.0)
-proxy4.GetDisplayColorAttr().Set([(0.6, 0.6, 0.6)])
-UsdGeom.Imageable(proxy4.GetPrim()).MakeInvisible()   # ← hidden
-
-guide4 = UsdGeom.Sphere.Define(s4, "/World/Character/RigControl")
-guide4.GetRadiusAttr().Set(0.4)
-guide4.GetDisplayColorAttr().Set([(0.0, 1.0, 1.0)])
-UsdGeom.XformCommonAPI(guide4).SetTranslate(Gf.Vec3d(0, 3, 0))
-# guide is NOT hidden — this is what the rigger sees
-
-add_ground(s4)
-path4 = os.path.join(SCRIPT_DIR, "purpose_GUIDE_ONLY.usda")
-s4.Export(path4)
-print(f"Scene 4 saved → {path4}")
-print("  Shows: ONLY the tiny cyan sphere (rig control)")
-
-
-# ─────────────────────────────────────────────────────────────────────
-# PRINT USDA OF SCENE 1 SO YOU CAN SEE THE STRUCTURE
-# ─────────────────────────────────────────────────────────────────────
+print(f"File 2 saved → {path2}")
+print("  Correct purpose tokens — usdview shows ONLY grey proxy sphere")
+print("  Orange hero IS in the file — usdview filters purpose='render'")
+print("  Cyan guide IS in the file  — usdview filters purpose='guide'")
 print()
-print("=== USDA of purpose_ALL.usda ===")
-print(s1.ExportToString(addSourceFileComment=False))
 
-print("=" * 60)
-print("OPEN EACH FILE IN USDVIEW AND PRESS F:")
+
+# ═══════════════════════════════════════════════════════════════════════
+# PRINT USDA OF FILE 2
+# Look for these lines in the output:
+#   uniform token purpose = "render"
+#   uniform token purpose = "proxy"
+#   uniform token purpose = "guide"
+# These are the actual purpose tokens that were missing before
+# ═══════════════════════════════════════════════════════════════════════
+print("=== purpose_correct.usda — look for 'purpose' lines ===")
+print(s2.ExportToString(addSourceFileComment=False))
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# TRAVERSE AND CONFIRM PURPOSES
+# ═══════════════════════════════════════════════════════════════════════
+print("=== COMPUTED PURPOSE FOR EACH PRIM ===")
+for prim in s2.Traverse():
+    if prim.IsA(UsdGeom.Imageable):
+        authored = UsdGeom.Imageable(prim).GetPurposeAttr().Get()
+        computed = UsdGeom.Imageable(prim).ComputePurpose()
+        visible  = "shown in usdview" if computed in ("default", "proxy") else "HIDDEN by usdview"
+        print(f"  {str(prim.GetPath()):<45} purpose={computed:<10}  {visible}")
 print()
-print(f"  ALL visible:    .\\scripts\\usdview.bat {path1}")
-print(f"  Render only:    .\\scripts\\usdview.bat {path2}")
-print(f"  Proxy only:     .\\scripts\\usdview.bat {path3}")
-print(f"  Guide only:     .\\scripts\\usdview.bat {path4}")
+
+print("=" * 65)
+print("OPEN IN USDVIEW:")
 print()
-print("In real production:")
-print("  The renderer opens the scene and filters for purpose='render'")
-print("  so it only sees the big orange sphere.")
-print("  The layout artist's viewport shows purpose='proxy'")
-print("  so they only see the small grey sphere (fast to load).")
-print("  The rigger's tool shows purpose='guide'")
-print("  so they see the rig controls.")
-print("  Same USD file. Same prims. Different consumers see different things.")
-print("=" * 60)
+print(f"  .\\scripts\\usdview.bat {path1}")
+print("  → Press F — see ALL THREE side by side")
+print("  → All have purpose='default' so nothing is filtered")
+print()
+print(f"  .\\scripts\\usdview.bat {path2}")
+print("  → Press F — see ONLY the grey sphere")
+print("  → Orange hidden:  purpose='render' (renderer only)")
+print("  → Cyan hidden:    purpose='guide'  (rigging tools only)")
+print("  → Open this file in VS Code to confirm orange IS in the file")
+print()
+print("KEY INSIGHT:")
+print("  Seeing only grey in usdview is CORRECT.")
+print("  usdview = viewport tool → shows proxy.")
+print("  Renderer              → shows render.")
+print("  Rigging tool          → shows guide.")
+print("  Same USD file. Different tools. Different views.")
+print("=" * 65)
