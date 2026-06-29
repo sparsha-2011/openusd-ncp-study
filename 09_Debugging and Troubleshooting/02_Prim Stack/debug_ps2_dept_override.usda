@@ -1,0 +1,12 @@
+#usda 1.0
+
+over "World"
+{
+    over "Chair" (
+        active = false
+    )
+    {
+        custom string pipeline:shotId = "SHOT_042"
+    }
+}
+

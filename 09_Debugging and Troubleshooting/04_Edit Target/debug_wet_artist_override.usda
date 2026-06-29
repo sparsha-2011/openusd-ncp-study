@@ -1,0 +1,10 @@
+#usda 1.0
+
+over "World"
+{
+    over "Chair"
+    {
+        double3 xformOp:translate = (15, 0, 0)
+    }
+}
+

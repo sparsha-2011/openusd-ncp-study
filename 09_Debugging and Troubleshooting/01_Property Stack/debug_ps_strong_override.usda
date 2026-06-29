@@ -1,0 +1,10 @@
+#usda 1.0
+
+over "World"
+{
+    over "Chair"
+    {
+        float chair:brightness = 99
+    }
+}
+

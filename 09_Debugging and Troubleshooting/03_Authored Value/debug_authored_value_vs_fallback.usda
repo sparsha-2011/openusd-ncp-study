@@ -1,0 +1,20 @@
+#usda 1.0
+(
+    doc = """Generated from Composed Stage of root layer 
+"""
+)
+
+def Sphere "Sphere_Default"
+{
+}
+
+def Sphere "Sphere_Authored"
+{
+    double radius = 1
+}
+
+def Sphere "Sphere_Custom"
+{
+    double radius = 3.5
+}
+

@@ -1,0 +1,8 @@
+#usda 1.0
+(
+    subLayers = [
+        @debug_wet_artist_override.usda@,
+        @debug_wet_model_base.usda@
+    ]
+)
+

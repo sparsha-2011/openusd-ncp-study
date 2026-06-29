@@ -1,0 +1,8 @@
+#usda 1.0
+(
+    subLayers = [
+        @debug_ps_strong_override.usda@,
+        @debug_ps_weak_layout.usda@
+    ]
+)
+
