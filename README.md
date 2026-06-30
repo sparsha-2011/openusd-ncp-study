@@ -13,7 +13,7 @@
 ## 🗺️ Timeline
 
 ```
-Jun 26 ──────── Jun 27-29 ──────── Jun 30 ──────── Jul 1 ──────── Jul 2
+Jun 24 ──────── Jun 24-29 ──────── Jun 30 ──────── Jul 1 ──────── Jul 2
    │                │                  │               │              │
  Setup           OpenUSD            Omniverse        Synthetic     Physics
  Brev +          Cert 🔄            Intro Course     Data Gen      Sim
@@ -22,11 +22,11 @@ Jun 26 ──────── Jun 27-29 ──────── Jun 30 ──
 
 ---
 
-## 🔄 Jun 26 — Brev cloud setup
+## 🔄 Jun 24 — Brev cloud setup
 
 **Goal:** Get Isaac Sim running without a local NVIDIA GPU.
 
-**Status:** In progress · Jun 26, 2026
+**Status:** In progress · Jun 24, 2026
 
 Isaac Sim requires an NVIDIA RTX GPU — running on Intel Iris Xe on Mac locally, so set up NVIDIA Brev cloud to spin up a GPU instance on demand. This is the recommended path for developers without local RTX hardware.
 
@@ -38,11 +38,11 @@ Isaac Sim requires an NVIDIA RTX GPU — running on Intel Iris Xe on Mac locally
 
 ---
 
-## 🔄 Jun 27–29 — OpenUSD Certification
+## 🔄 Jun 24–29 — OpenUSD Certification
 
 **Goal:** Understand the foundational language of the entire Physical AI stack.
 
-**Status:** In progress · Jun 27–29, 2026
+**Status:** In progress · Jun 24–29, 2026
 
 OpenUSD (Universal Scene Description) is the file format and framework that underpins Omniverse, Isaac Sim, and every robot and simulation asset in the Physical AI ecosystem. Originally built by Pixar for film pipelines, adopted by NVIDIA as the foundation of Omniverse.
 
