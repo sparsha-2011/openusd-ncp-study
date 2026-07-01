@@ -293,6 +293,42 @@ asset_stage.Save()
 - References can point to a specific prim path within the file: `@./asset.usda@</SpecificPrim>`
 - Multiple references can be stacked on one prim: `prepend references = [@./a.usda@, @./b.usda@]`
 
+### `prepend` and `append` — List Insertion Behaviour
+
+Both keywords control where a new arc is inserted relative to existing arcs of the same type on that prim.
+
+| Keyword   | Equivalent to          | Position      | Strength                    |
+| --------- | ---------------------- | ------------- | --------------------------- |
+| `prepend` | `list.insert(0, item)` | Front of list | Stronger than existing arcs |
+| `append`  | `list.append(item)`    | Back of list  | Weaker than existing arcs   |
+
+**Multiple separate `prepend` lines behave like repeated `insert(0)` calls — the last one written ends up at index 0:**
+
+```usda
+prepend references = @./base_geometry.usda@      # insert(0) → ["base_geometry"]
+prepend references = @./material_override.usda@  # insert(0) → ["material_override", "base_geometry"]
+#                                                               ↑ index 0 — WINS despite being written second
+```
+
+This is counterintuitive — the arc written last in the file ends up strongest. Use a single list to make order explicit:
+
+```usda
+def Xform "Chair" (
+    prepend references = [
+        @./material_override.usda@,   # index 0 — strongest
+        @./base_geometry.usda@        # index 1 — weaker
+    ]
+) { }
+```
+
+**Mixed prepend and append on the same prim:**
+prepend items → fill the front of the list (strongest)
+
+append items → fill the back of the list (weakest)
+Final order: [prepend[0], prepend[1], ..., append[0], append[1], ...]
+
+**On a fresh prim with no existing arcs, `prepend` and `append` produce identical results** — the distinction only matters when arcs already exist on the prim.
+
 ### USDA Syntax
 
 ```usda
