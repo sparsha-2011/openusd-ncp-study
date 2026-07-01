@@ -386,6 +386,28 @@ scene.usda opens quickly:          After stage.Load("/World/City/BuildingA"):
   /World/City/BuildingC (empty)        /walls_geo (mesh, fully loaded)
 ```
 
+### Explicit prim path vs defaultPrim
+
+When referencing or payloading a file, USD needs to know **which prim inside that file** to bring in. There are two ways to tell it:
+
+**Without explicit path — relies on `defaultPrim`**
+
+```usda
+prepend references = @./chair_asset.usda@
+prepend payload    = @./chair_asset.usda@
+```
+
+USD opens the file and looks for `defaultPrim` in its metadata. If not set — silent failure, empty prim.
+
+**With explicit path — bypasses `defaultPrim` entirely**
+
+```usda
+prepend references = @./chair_asset.usda@</Chair>
+prepend payload    = @./chair_asset.usda@</Chair>
+```
+
+The path after `@` inside `<>` tells USD exactly which prim to target. `defaultPrim` is irrelevant.
+
 ### Payload vs Reference
 
 | Property            | Reference               | Payload                        |
