@@ -166,7 +166,7 @@ shot.usda                          flat_delivery.usda
 
 > **Time samples are PRESERVED.** Flattening does NOT bake animation to static values. That is a separate, deliberate operation.
 
-# `stage.Flatten()` vs `UsdUtils.FlattenLayerStack()`
+### `stage.Flatten()` vs `UsdUtils.FlattenLayerStack()`
 
 Both methods return a new `SdfLayer` in memory. The original stage and all its source files are **never modified**. Think of both as taking a photograph of the stage at that moment — the scene itself is untouched.
 
