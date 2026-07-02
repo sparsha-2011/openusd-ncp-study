@@ -824,7 +824,7 @@ print(model_api.GetKind())   # "factory_unit"
 
 **Step 3 — Implement a schema plugin that INHERITS (not overrides) UsdModelAPI**
 
-````
+```
 EXTEND UsdModelAPI   ← adds behaviour for the new kind
 
 What you write manually:
@@ -832,6 +832,9 @@ What you write manually:
   FactoryUnitAPI.cpp        ← C++ implementation
                                contains TF_REGISTRY_FUNCTION (written manually)
   plugInfo.json             ← manifest file (written manually)
+```
+
+#### Code Snippet:
 
 ```python
 # In C++ — your schema plugin adds behaviour without replacing existing
@@ -852,8 +855,9 @@ What you write manually:
 factory_api = FactoryUnitAPI(prim)
 factory_api.GetFacilityId()   # new method you added
 factory_api.GetKind()         # original UsdModelAPI method still works
+```
 
-````
+plugInfo.json
 
 ```
 {
@@ -867,7 +871,7 @@ factory_api.GetKind()         # original UsdModelAPI method still works
     }
   }]
 }
-```
+
 
 What you run:
 cmake + make ← compiles your C++ into factoryUnit.so
@@ -878,12 +882,13 @@ plugInfo.json
 → both placed in a directory
 → PXR_PLUGINPATH_NAME points to that directory
 
-````
+```
 
 **Step 4 — Extend the `Validate()` method for domain-specific rules**
 
+```
 Custom validation ensures `factory_unit` prims always have the required structure.
-```python
+
 # In C++ — override Validate() to add factory_unit specific checks
 #
 # bool FactoryUnitAPI::Validate(std::string* reason) const {
@@ -925,7 +930,7 @@ is_valid, reason = factory_api.Validate()
 if not is_valid:
     print(f"Invalid factory_unit: {reason}")
     # "factory_unit must have pipeline:facilityId set"
-````
+```
 
 ### Wrong Approaches
 
