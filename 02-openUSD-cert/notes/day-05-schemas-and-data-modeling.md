@@ -268,6 +268,62 @@ STEP 5  First use of the type in a running process
         Next process starts from Step 4 again.
 ```
 
+### Schema Deployment Methods
+
+Custom schemas do not have to be deployed as a separate plugin as specified above in step 4. There are three valid deployment methods depending on your context that can be followed at Step 4.
+
+**Method 1 — Separate plugin (most common in pipelines)**
+
+Compiled into a standalone `.so`/`.dll` and discovered at runtime via `PXR_PLUGINPATH_NAME`.
+
+```bash
+# Directory structure
+/path/to/acmeSensors/
+  ├── acmeSensors.so
+  └── plugInfo.json
+
+export PXR_PLUGINPATH_NAME=/path/to/acmeSensors/
+```
+
+- Most flexible — deploy without rebuilding the application
+- Must be set in every environment (render farm, artist machines, CI)
+- Schema loads lazily on first use
+
+**Method 2 — Linked directly into the application**
+
+`acmeSensors.cpp` is compiled directly into the host application at build time. No separate `.so`, no `PXR_PLUGINPATH_NAME` needed.
+
+```cmake
+# CMakeLists.txt — link schema directly into your app
+target_sources(MyApp PRIVATE acmeSensors.cpp)
+target_link_libraries(MyApp usd)
+```
+
+- Schema is always available — baked into the executable
+- No deployment steps — ships with the application
+- Common in DCC tools (Maya plugins, Houdini HDAs)
+- Cannot be updated without rebuilding the application
+
+**Method 3 — Compiled into the USD build itself**
+
+Schema compiled directly into the USD libraries. Available everywhere without any deployment.
+
+- Used by studios with custom USD forks
+- Schema available to all tools that use that USD build
+- Least flexible — requires rebuilding USD itself
+
+---
+
+### Comparison
+
+| Method            | Deployment               | Flexibility                          | Common use case  |
+| ----------------- | ------------------------ | ------------------------------------ | ---------------- |
+| Separate plugin   | `PXR_PLUGINPATH_NAME`    | High — update without rebuild        | Studio pipelines |
+| Linked into app   | Compiled into executable | Medium — update requires app rebuild | DCC tool plugins |
+| Compiled into USD | Part of USD build        | Low — update requires USD rebuild    | Custom USD forks |
+
+> **Exam trap:** "Compiling custom schemas into a separate plugin to be loaded by USD runtime" is marked incorrect not because separate plugins are wrong — they are valid and common — but because this phrasing implies it is the **only** deployment method. The correct statement is that schemas can be deployed as a separate plugin, linked directly into the application, or compiled into the USD build. The separate plugin approach is not required.
+
 ### The TfType Journey in One View
 
 ```
