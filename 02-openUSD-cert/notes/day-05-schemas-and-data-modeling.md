@@ -231,6 +231,10 @@ STEP 3  Compile C++ into a shared library
 STEP 4  Deploy the plugin
         ─────────────────────────────────────────────────────
         Place acmeSensors.so + plugInfo.json in a directory.
+        /path/to/acmeSensors/
+          ├── acmeSensors.so       ← compiled library (contains TF_REGISTRY_FUNCTION)
+          └── plugInfo.json        ← discovery metadata (tells USD the library exists)
+
         Set PXR_PLUGINPATH_NAME=/path/to/acmeSensors/
 
         TfType relevance: DISCOVERY ENABLED, REGISTRATION STILL PENDING
