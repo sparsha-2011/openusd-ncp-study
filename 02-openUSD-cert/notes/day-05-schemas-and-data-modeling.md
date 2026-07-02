@@ -268,7 +268,7 @@ STEP 5  First use of the type in a running process
         Next process starts from Step 4 again.
 ```
 
-### Schema Deployment Methods
+### Deployment Methods
 
 Custom schemas do not have to be deployed as a separate plugin as specified above in step 4. There are three valid deployment methods depending on your context that can be followed at Step 4.
 
@@ -595,6 +595,8 @@ SdfFileFormat = defines how data is READ and WRITTEN to/from a file format
    → Calls MyFormatPlugin.Read() to translate to SdfLayer
    → Stage composes normally from that point
 ```
+
+Plugin Deployment can be done using any one of the approches mention [here](#deployment-methods)
 
 ### ArResolver — Handling External References During File I/O
 
@@ -938,8 +940,9 @@ factoryUnit.so
 plugInfo.json
 → both placed in a directory
 → PXR_PLUGINPATH_NAME points to that directory
-
 ```
+
+Deployment can be done using any one of the approches mention [here](#deployment-methods)
 
 **Step 4 — Extend the `Validate()` method for domain-specific rules**
 
