@@ -859,7 +859,7 @@ factory_api.GetKind()         # original UsdModelAPI method still works
 
 plugInfo.json
 
-```
+```python
 {
   "Plugins": [{
     "Name": "factoryUnit",
@@ -871,7 +871,9 @@ plugInfo.json
     }
   }]
 }
+```
 
+````
 
 What you run:
 cmake + make ← compiles your C++ into factoryUnit.so
@@ -886,7 +888,7 @@ plugInfo.json
 
 **Step 4 — Extend the `Validate()` method for domain-specific rules**
 
-```
+```python
 Custom validation ensures `factory_unit` prims always have the required structure.
 
 # In C++ — override Validate() to add factory_unit specific checks
@@ -1015,5 +1017,6 @@ Eliminate **any option** containing these phrases immediately:
 
 ---
 
-_Previous: [Day 4 — Advanced Composition Concepts](day-04-advanced-composition.md)_  
+_Previous: [Day 4 — Advanced Composition Concepts](day-04-advanced-composition.md)_
 _Next: [Day 6 — Visualization](day-06-visualization.md)_
+````
