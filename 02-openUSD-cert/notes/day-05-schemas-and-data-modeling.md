@@ -874,7 +874,6 @@ plugInfo.json
 ```
 
 ```
-
 What you run:
 cmake + make ← compiles your C++ into factoryUnit.so
 
@@ -888,9 +887,9 @@ plugInfo.json
 
 **Step 4 — Extend the `Validate()` method for domain-specific rules**
 
-```python
 Custom validation ensures `factory_unit` prims always have the required structure.
 
+```python
 # In C++ — override Validate() to add factory_unit specific checks
 #
 # bool FactoryUnitAPI::Validate(std::string* reason) const {
