@@ -201,7 +201,7 @@ STEP 2  Run usdGenSchema schema.usda
           acmeSensors.cpp         ← C++ implementation
                                      CONTAINS TF_REGISTRY_FUNCTION  ← key output
           wrapAcmeSensors.cpp     ← Python bindings
-          plugInfo.json           ← plugin discovery metadata
+          plugInfo.json           ← manifest file containing the plugin discovery metadata
 
         TfType relevance: TF_REGISTRY_FUNCTION IS GENERATED HERE
         usdGenSchema writes the registration macro automatically.
